@@ -9,8 +9,8 @@
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 
-POST    /recipes                    controllers.HomeController.createRecipe()
-GET     /recipes                    controllers.HomeController.listRecipes()
-GET     /recipe/:recipeID           controllers.HomeController.getRecipe(recipeID: String)
-PUT     /recipe/:recipeID           controllers.HomeController.updateRecipe(recipeID: String)
-DELETE  /recipe/:recipeID           controllers.HomeController.deleteRecipe(recipeID: String)
+POST    /recipes                            controllers.HomeController.createRecipe()
+GET     /recipes                            controllers.HomeController.listRecipes()
+GET     /recipe/:recipeID                   controllers.HomeController.getRecipe(recipeID: String)
+PATCH   /recipe/:recipeID/:newRecipeName    controllers.HomeController.updateRecipeName(recipeID: String, newRecipeName: String)
+DELETE  /recipe/:recipeID                   controllers.HomeController.deleteRecipe(recipeID: String)

@@ -30,18 +30,29 @@ public class HomeController extends Controller {
     List<RecipeResource> recipeResList = new ArrayList<>();
 
     public Result listRecipes() {
-        System.out.println("Listar recetas");
-
         JsonNode json = Json.toJson(recipeResList);
-
         return ok(json);
     }
 
     public Result getRecipe(String recipeID) {
-        return ok();
+        for (RecipeResource recipeResource : recipeResList) {
+            if (Objects.equals(recipeResource.getId(), recipeID)) {
+                JsonNode json = Json.toJson(recipeResource);
+                return ok(json);
+            }
+        }
+
+        return notFound();
     }
 
-    public Result updateRecipe(String recipeID) {
+    public Result updateRecipeName(String recipeID, String newRecipeName) {
+        int index = searchRecipeIndexByID(recipeID);
+
+        if (index == -1) {
+            return notFound();
+        }
+
+        recipeResList.get(index).setName(newRecipeName);
         return ok();
     }
 
@@ -57,14 +68,7 @@ public class HomeController extends Controller {
     }
 
     public Result deleteRecipe(String recipeID) {
-        int index = -1;
-
-        for (int i = 0; i < recipeResList.size(); i++) {
-            if (Objects.equals(recipeResList.get(i).getId(), recipeID)) {
-                index = i;
-                break;
-            }
-        }
+        int index = searchRecipeIndexByID(recipeID);
 
         if (index == -1) {
             return notFound();
@@ -72,5 +76,15 @@ public class HomeController extends Controller {
 
         recipeResList.remove(index);
         return ok();
+    }
+
+    private int searchRecipeIndexByID(String recipeID) {
+        for (int i = 0; i < recipeResList.size(); i++) {
+            if (Objects.equals(recipeResList.get(i).getId(), recipeID)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }
