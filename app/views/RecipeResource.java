@@ -6,8 +6,9 @@ public class RecipeResource {
     String id;
     String name;
 
-    public RecipeResource() {
+    public RecipeResource(String recipeName) {
         this.id = UUID.randomUUID().toString();
+        this.name = recipeName;
     }
 
     public String getId() {

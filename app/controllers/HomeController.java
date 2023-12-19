@@ -57,8 +57,7 @@ public class HomeController extends Controller {
     }
 
     public Result createRecipe() {
-        RecipeResource recipeRes = new RecipeResource();
-        recipeRes.setName("Pollo frito");
+        RecipeResource recipeRes = new RecipeResource("Pollo frito");
 
         recipeResList.add(recipeRes);
 
