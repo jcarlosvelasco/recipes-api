@@ -9,8 +9,8 @@
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 
-POST    /recipes                            controllers.HomeController.createRecipe()
-GET     /recipes                            controllers.HomeController.listRecipes()
-GET     /recipe/:recipeID                   controllers.HomeController.getRecipe(recipeID: String)
-PATCH   /recipe/:recipeID/:newRecipeName    controllers.HomeController.updateRecipeName(recipeID: String, newRecipeName: String)
-DELETE  /recipe/:recipeID                   controllers.HomeController.deleteRecipe(recipeID: String)
+POST    /recipes                            controllers.HomeController.createRecipe(req: play.mvc.Http.Request)
+GET     /recipes                            controllers.HomeController.listRecipes(req: play.mvc.Http.Request)
+GET     /recipe/:recipeID                   controllers.HomeController.getRecipe(recipeID: String, req: play.mvc.Http.Request)
+PATCH   /recipe/:recipeID/:newRecipeName    controllers.HomeController.updateRecipeName(recipeID: String, newRecipeName: String, req: play.mvc.Http.Request)
+DELETE  /recipe/:recipeID                   controllers.HomeController.deleteRecipe(recipeID: String, req: play.mvc.Http.Request)

@@ -1,0 +1,5 @@
+@(recipeInList: views.RecipeResource)
+<recipe>
+    <id>@recipeInList.getId()</id>
+    <name>@recipeInList.getName()</name>
+</recipe>

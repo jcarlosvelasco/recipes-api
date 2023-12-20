@@ -1,0 +1,6 @@
+@(recipeList: List[views.RecipeResource])
+<recipes>
+    @for(recipeInList <- recipeList) {
+    @_recipe(recipeInList)
+    }
+</recipes>
