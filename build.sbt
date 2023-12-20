@@ -11,3 +11,8 @@ libraryDependencies += guice
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.5"
 
+enablePlugins(PlayEbean)
+libraryDependencies += evolutions
+libraryDependencies += jdbc
+
+libraryDependencies += "com.h2database" % "h2" % "2.1.214"

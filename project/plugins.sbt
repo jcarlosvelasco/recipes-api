@@ -10,3 +10,5 @@ addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.16.2")
 ThisBuild / libraryDependencySchemes ++= Seq(
   "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 )
+
+addSbtPlugin("com.typesafe.play" % "sbt-play-ebean" % "7.0.0")
