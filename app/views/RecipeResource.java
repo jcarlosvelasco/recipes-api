@@ -3,20 +3,20 @@ package views;
 import java.util.UUID;
 
 public class RecipeResource {
-    String id;
+    Long id;
     String name;
 
     public RecipeResource(String recipeName) {
-        this.id = UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().getMostSignificantBits();
         this.name = recipeName;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
     /*
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
     */

@@ -8,6 +8,7 @@ import views.RecipeResource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import play.twirl.api.Xml;
 
 
@@ -24,10 +25,11 @@ public class HomeController extends Controller {
      * <code>GET</code> request with a path of <code>/</code>.
      */
 
+    /*
     public Result index() {
         return ok(views.html.index.render());
     }
-
+    */
 
     List<RecipeResource> recipeResList = new ArrayList<>();
 
@@ -50,7 +52,7 @@ public class HomeController extends Controller {
         return Results.notAcceptable();
     }
 
-    public Result getRecipe(String recipeID, Http.Request req) {
+    public Result getRecipe(Long recipeID, Http.Request req) {
         for (RecipeResource recipeResource : recipeResList) {
             if (Objects.equals(recipeResource.getId(), recipeID)) {
                 return returnOkResult(req, recipeResource);
@@ -60,7 +62,7 @@ public class HomeController extends Controller {
         return notFound();
     }
 
-    public Result updateRecipeName(String recipeID, String newRecipeName, Http.Request req) {
+    public Result updateRecipeName(Long recipeID, String newRecipeName, Http.Request req) {
         int index = searchRecipeIndexByID(recipeID);
 
         if (index == -1) {
@@ -78,7 +80,7 @@ public class HomeController extends Controller {
         return returnCreatedResult(req, recipeRes);
     }
 
-    public Result deleteRecipe(String recipeID, Http.Request req) {
+    public Result deleteRecipe(Long recipeID, Http.Request req) {
         int index = searchRecipeIndexByID(recipeID);
 
         if (index == -1) {
@@ -128,7 +130,7 @@ public class HomeController extends Controller {
         return Results.notAcceptable();
     }
 
-    private int searchRecipeIndexByID(String recipeID) {
+    private int searchRecipeIndexByID(Long recipeID) {
         for (int i = 0; i < recipeResList.size(); i++) {
             if (Objects.equals(recipeResList.get(i).getId(), recipeID)) {
                 return i;
