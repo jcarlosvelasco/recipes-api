@@ -1,15 +1,21 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import models.RecipeModel;
+import play.data.Form;
+import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.*;
 import views.RecipeResource;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+//import java.util.Objects;
 
 import play.twirl.api.Xml;
+
+import javax.inject.Inject;
 
 
 /**
@@ -33,6 +39,9 @@ public class HomeController extends Controller {
 
     List<RecipeResource> recipeResList = new ArrayList<>();
 
+    @Inject
+    FormFactory formFactory;
+
     public Result listRecipes(Http.Request req) {
         if (req.header("Accept").isEmpty()) {
             return Results.notAcceptable();
@@ -53,13 +62,14 @@ public class HomeController extends Controller {
     }
 
     public Result getRecipe(Long recipeID, Http.Request req) {
-        for (RecipeResource recipeResource : recipeResList) {
-            if (Objects.equals(recipeResource.getId(), recipeID)) {
-                return returnOkResult(req, recipeResource);
-            }
+        RecipeModel recipeModel = RecipeModel.findByID(recipeID);
+        if (recipeModel == null) {
+            return Results.notFound();
         }
 
-        return notFound();
+        RecipeResource recipeRes = new RecipeResource(recipeModel);
+
+        return returnOkResult(req, recipeRes);
     }
 
     public Result updateRecipeName(Long recipeID, String newRecipeName, Http.Request req) {
@@ -74,10 +84,18 @@ public class HomeController extends Controller {
     }
 
     public Result createRecipe(Http.Request req) {
-        RecipeResource recipeRes = new RecipeResource("Pollo frito");
-        recipeResList.add(recipeRes);
+        Form<RecipeResource> form = formFactory.form(RecipeResource.class).bindFromRequest(req);
 
-        return returnCreatedResult(req, recipeRes);
+        if (form.hasErrors()) {
+            return badRequest(form.errorsAsJson());
+        }
+
+        RecipeResource recipeRes = form.get();
+
+        RecipeModel recipeModel = recipeRes.toModel();
+        recipeModel.save();
+
+        return Results.created(recipeRes.toJson()).as("application/json");
     }
 
     public Result deleteRecipe(Long recipeID, Http.Request req) {
@@ -131,11 +149,12 @@ public class HomeController extends Controller {
     }
 
     private int searchRecipeIndexByID(Long recipeID) {
+        /*
         for (int i = 0; i < recipeResList.size(); i++) {
             if (Objects.equals(recipeResList.get(i).getId(), recipeID)) {
                 return i;
             }
-        }
+        }*/
 
         return -1;
     }
