@@ -11,8 +11,6 @@ import views.RecipeResource;
 
 import java.util.ArrayList;
 import java.util.List;
-//import java.util.Objects;
-
 import play.twirl.api.Xml;
 
 import javax.inject.Inject;
@@ -37,8 +35,6 @@ public class HomeController extends Controller {
     }
     */
 
-    List<RecipeResource> recipeResList = new ArrayList<>();
-
     @Inject
     FormFactory formFactory;
 
@@ -47,21 +43,22 @@ public class HomeController extends Controller {
             return Results.notAcceptable();
         }
 
-        if (req.accepts("application/json")) {
-            JsonNode json = Json.toJson(recipeResList);
-            return ok(json);
+        List<RecipeModel> recipeModelList = RecipeModel.getRecipeList();
+
+        List<RecipeResource> recipeResList = new ArrayList<>();
+        for (RecipeModel recipeModel : recipeModelList) {
+            RecipeResource recipeRes = new RecipeResource(recipeModel);
+            recipeResList.add(recipeRes);
         }
 
-        if (req.accepts("application/xml")) {
-            Xml listXml = views.xml._recipes.render(recipeResList);
-            Xml content = views.xml._header.render(listXml);
-            return ok(content);
-        }
-
-        return Results.notAcceptable();
+        return outputOkRecipeList(req, recipeResList);
     }
 
     public Result getRecipe(Long recipeID, Http.Request req) {
+        if (req.header("Accept").isEmpty()) {
+            return Results.notAcceptable();
+        }
+
         RecipeModel recipeModel = RecipeModel.findByID(recipeID);
         if (recipeModel == null) {
             return Results.notFound();
@@ -69,21 +66,26 @@ public class HomeController extends Controller {
 
         RecipeResource recipeRes = new RecipeResource(recipeModel);
 
-        return returnOkResult(req, recipeRes);
+        return returnOkRecipe(req, recipeRes);
     }
 
-    public Result updateRecipeName(Long recipeID, String newRecipeName, Http.Request req) {
-        int index = searchRecipeIndexByID(recipeID);
-
-        if (index == -1) {
-            return notFound();
+    public Result updateRecipeName(Long recipeID, String newRecipeName) {
+        RecipeModel recipeModel = RecipeModel.findByID(recipeID);
+        if (recipeModel == null) {
+            return Results.notFound();
         }
 
-        recipeResList.get(index).setName(newRecipeName);
-        return returnOkResult(req, recipeResList.get(index));
+        recipeModel.setName(newRecipeName);
+        recipeModel.update();
+
+        return Results.ok();
     }
 
     public Result createRecipe(Http.Request req) {
+        if (req.header("Accept").isEmpty()) {
+            return Results.notAcceptable();
+        }
+
         Form<RecipeResource> form = formFactory.form(RecipeResource.class).bindFromRequest(req);
 
         if (form.hasErrors()) {
@@ -95,26 +97,20 @@ public class HomeController extends Controller {
         RecipeModel recipeModel = recipeRes.toModel();
         recipeModel.save();
 
-        return Results.created(recipeRes.toJson()).as("application/json");
+        return outputCreatedRecipe(req, recipeRes);
     }
 
-    public Result deleteRecipe(Long recipeID, Http.Request req) {
-        int index = searchRecipeIndexByID(recipeID);
-
-        if (index == -1) {
-            return notFound();
+    public Result deleteRecipe(Long recipeID) {
+        RecipeModel recipeModel = RecipeModel.findByID(recipeID);
+        if (recipeModel == null) {
+            return Results.notFound();
         }
 
-        RecipeResource recipeRes = recipeResList.remove(index);
-
-        return returnOkResult(req, recipeRes);
+        boolean ok = recipeModel.delete();
+        return ok ? Results.ok() : Results.internalServerError();
     }
 
-    private Result returnOkResult(Http.Request req, RecipeResource recipeRes) {
-        if (req.header("Accept").isEmpty()) {
-            return Results.notAcceptable();
-        }
-
+    private Result returnOkRecipe(Http.Request req, RecipeResource recipeRes) {
         if (req.accepts("application/json")) {
             JsonNode json = Json.toJson(recipeRes);
             return ok(json);
@@ -129,11 +125,22 @@ public class HomeController extends Controller {
         return Results.notAcceptable();
     }
 
-    private Result returnCreatedResult(Http.Request req, RecipeResource recipeRes) {
-        if (req.header("Accept").isEmpty()) {
-            return Results.notAcceptable();
+    private Result outputOkRecipeList(Http.Request req, List<RecipeResource> recipeResList) {
+        if (req.accepts("application/json")) {
+            JsonNode json = Json.toJson(recipeResList);
+            return ok(json);
         }
 
+        if (req.accepts("application/xml")) {
+            Xml listXml = views.xml._recipes.render(recipeResList);
+            Xml content = views.xml._header.render(listXml);
+            return ok(content);
+        }
+
+        return Results.notAcceptable();
+    }
+
+    private Result outputCreatedRecipe(Http.Request req, RecipeResource recipeRes) {
         if (req.accepts("application/json")) {
             JsonNode json = Json.toJson(recipeRes);
             return created(json);
@@ -146,16 +153,5 @@ public class HomeController extends Controller {
         }
 
         return Results.notAcceptable();
-    }
-
-    private int searchRecipeIndexByID(Long recipeID) {
-        /*
-        for (int i = 0; i < recipeResList.size(); i++) {
-            if (Objects.equals(recipeResList.get(i).getId(), recipeID)) {
-                return i;
-            }
-        }*/
-
-        return -1;
     }
 }

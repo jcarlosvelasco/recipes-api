@@ -12,5 +12,5 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 POST    /recipes                            controllers.HomeController.createRecipe(req: play.mvc.Http.Request)
 GET     /recipes                            controllers.HomeController.listRecipes(req: play.mvc.Http.Request)
 GET     /recipe/:recipeID                   controllers.HomeController.getRecipe(recipeID: Long, req: play.mvc.Http.Request)
-PATCH   /recipe/:recipeID/:newRecipeName    controllers.HomeController.updateRecipeName(recipeID: Long, newRecipeName: String, req: play.mvc.Http.Request)
-DELETE  /recipe/:recipeID                   controllers.HomeController.deleteRecipe(recipeID: Long, req: play.mvc.Http.Request)
+PATCH   /recipe/:recipeID/:newRecipeName    controllers.HomeController.updateRecipeName(recipeID: Long, newRecipeName: String)
+DELETE  /recipe/:recipeID                   controllers.HomeController.deleteRecipe(recipeID: Long)

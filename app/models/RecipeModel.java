@@ -8,9 +8,9 @@ import io.ebean.annotation.WhenModified;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Version;
-//import views.RecipeResource;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 public class RecipeModel extends Model  {
@@ -35,12 +35,17 @@ public class RecipeModel extends Model  {
         return finder.byId(id);
     }
 
+    /*
     public static RecipeModel findByName(String name) {
         ExpressionList<RecipeModel> res = finder.query().where().contains("name", name);
 
         return res.findOne();
-    }
+    }*/
 
+    public static List<RecipeModel> getRecipeList() {
+        ExpressionList<RecipeModel> res = finder.query().where().orderBy("name");
+        return res.findList();
+    }
 
     public Long getId() {
         return id;
